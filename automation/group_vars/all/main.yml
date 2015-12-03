@@ -1,0 +1,179 @@
+
+interfaces:
+  spine1:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "bond2"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp7", "swp8"]
+        clag_ip: "169.254.254.1"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    bond2:
+      - name: "bond2"
+        members: ["swp3", "swp4"]
+        clag_id: "2"
+  spine2:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "bond2"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp7", "swp8"]
+        clag_ip: "169.254.254.2"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    bond2:
+      - name: "bond2"
+        members: ["swp3", "swp4"]
+        clag_id: "2"
+  leaf1:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "compute01", "compute02", "controller"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp3", "swp4"]
+        clag_ip: "169.254.254.1"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    compute01:
+      - name: "compute01"
+        members: ["swp5"]
+        clag_id: "5"
+    compute02:
+      - name: "compute02"
+        members: ["swp6"]
+        clag_id: "6"
+    controller:
+      - name: "controller"
+        members: ["swp7"]
+        clag_id: "7"
+  leaf2:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "compute01", "compute02", "controller"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp3", "swp4"]
+        clag_ip: "169.254.254.2"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    compute01:
+      - name: "compute01"
+        members: ["swp5"]
+        clag_id: "5"
+    compute02:
+      - name: "compute02"
+        members: ["swp6"]
+        clag_id: "6"
+    controller:
+      - name: "controller"
+        members: ["swp7"]
+        clag_id: "7"
+  leaf3:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "compute03", "compute04"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp3", "swp4"]
+        clag_ip: "169.254.254.1"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    compute03:
+      - name: "compute03"
+        members: ["swp5"]
+        clag_id: "5"
+    compute04:
+      - name: "compute04"
+        members: ["swp6"]
+        clag_id: "6"
+  leaf4:
+    bridges:
+      - name: "br0"
+        members: ["peerlink", "bond1", "compute03", "compute04"]
+    peerlink:
+      - name: "peerlink"
+        members: ["swp3", "swp4"]
+        clag_ip: "169.254.254.2"
+    bond1:
+      - name: "bond1"
+        members: ["swp1", "swp2"]
+        clag_id: "1"
+    compute03:
+      - name: "compute03"
+        members: ["swp5"]
+        clag_id: "5"
+    compute04:
+      - name: "compute04"
+        members: ["swp6"]
+        clag_id: "6"
+
+
+addresses:
+  spine1:
+    clag_ip: "169.254.254.1/30"
+    clag_peer: "169.254.254.2"
+    clag_mac: "44:38:39:ff:00:01"
+    svi: "10.1.10.252/24"
+  spine2:
+    clag_ip: "169.254.254.2/30"
+    clag_peer: "169.254.254.1"
+    clag_mac: "44:38:39:ff:00:01"
+    svi: "10.1.10.253/24"
+  leaf1:
+    clag_ip: "169.254.254.1/30"
+    clag_peer: "169.254.254.2"
+    clag_mac: "44:38:39:ff:00:02"
+    svi: "10.1.10.1/24"
+  leaf2:
+    clag_ip: "169.254.254.2/30"
+    clag_peer: "169.254.254.1"
+    clag_mac: "44:38:39:ff:00:02"
+    svi: "10.1.10.2/24"
+  leaf3:
+    clag_ip: "169.254.254.1/30"
+    clag_peer: "169.254.254.2"
+    clag_mac: "44:38:39:ff:00:03"
+    svi: "10.1.10.3/24"
+  leaf4:
+    clag_ip: "169.254.254.2/30"
+    clag_peer: "169.254.254.1"
+    clag_mac: "44:38:39:ff:00:03"
+    svi: "10.1.10.4/24"
+  compute01:
+    vl101: "192.168.100.3"
+    vl102: "10.254.192.3"
+  compute02:
+    vl101: "192.168.100.4"
+    vl102: "10.254.192.4"
+  compute03:
+    vl101: "192.168.100.5"
+    vl102: "10.254.192.5"
+  compute04:
+    vl101: "192.168.100.6"
+    vl102: "10.254.192.6"
+  controller:
+    vl101: "192.168.100.2"
+    vl102: "10.254.192.1"
+
+
+vrr:
+  spine1:
+    vip: "10.1.10.254"
+    vmac: "00:11:22:33:44:55"
+  spine2:
+    vip: "10.1.10.254"
+    vmac: "00:11:22:33:44:55"

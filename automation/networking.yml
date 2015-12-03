@@ -1,0 +1,19 @@
+---
+- hosts: networking
+  user: vagrant
+  sudo: yes
+  roles:
+    - switch-networking
+  vars_files:
+    - group_vars/all/main.yml
+  handlers:
+    - include : handlers/main.yml
+
+- hosts: servers
+  user: vagrant
+  sudo: yes
+  roles:
+    - host-networking
+    - dns
+  vars_files:
+    - group_vars/all/main.yml

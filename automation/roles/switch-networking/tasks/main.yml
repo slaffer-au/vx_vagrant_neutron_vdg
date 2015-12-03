@@ -1,0 +1,149 @@
+- set_fact:
+    bridges: "{{ interfaces[ansible_hostname].bridges }}"
+  when: interfaces[ansible_hostname].bridges is defined
+
+- set_fact:
+    peerlink: "{{ interfaces[ansible_hostname].peerlink }}"
+  when: interfaces[ansible_hostname].peerlink is defined
+
+- set_fact:
+    compute01: "{{ interfaces[ansible_hostname].compute01 }}"
+  when: interfaces[ansible_hostname].compute01 is defined
+
+- set_fact:
+    compute02: "{{ interfaces[ansible_hostname].compute02 }}"
+  when: interfaces[ansible_hostname].compute02 is defined
+
+- set_fact:
+    compute03: "{{ interfaces[ansible_hostname].compute03 }}"
+  when: interfaces[ansible_hostname].compute03 is defined
+
+- set_fact:
+    compute04: "{{ interfaces[ansible_hostname].compute04 }}"
+  when: interfaces[ansible_hostname].compute04 is defined
+
+- set_fact:
+    controller: "{{ interfaces[ansible_hostname].controller }}"
+  when: interfaces[ansible_hostname].controller is defined
+
+- set_fact:
+    svi: "{{ addresses[ansible_hostname].svi }}"
+  when: addresses[ansible_hostname].svi is defined
+
+- set_fact:
+    bond1: "{{ interfaces[ansible_hostname].bond1 }}"
+  when: interfaces[ansible_hostname].bond1 is defined
+
+- set_fact:
+    bond2: "{{ interfaces[ansible_hostname].bond2 }}"
+  when: interfaces[ansible_hostname].bond2 is defined
+
+- set_fact:
+    bond3: "{{ interfaces[ansible_hostname].bond3 }}"
+  when: interfaces[ansible_hostname].bond3 is defined
+
+- name: configure bond1
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: bond1
+  when: bond1 is defined
+
+- name: configure bond2
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: bond2
+  when: bond2 is defined
+
+- name: configure bond3
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: bond3
+  when: bond3 is defined
+
+- name: configure bridges
+  cl_bridge:
+    name: "{{ item.name }}"
+    vlan_aware: yes
+    ports: "{{ item.members }}"
+    stp: true
+    vids: "100-2000"
+    pvid: "1"
+  with_items: bridges
+  when: bridges is defined
+
+- name: configure peerlink
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+  with_items: peerlink
+  when: peerlink is defined
+
+- name: configure compute01
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: compute01
+  when: compute01 is defined
+
+- name: configure compute02
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: compute02
+  when: compute02 is defined
+
+- name: configure compute03
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: compute03
+  when: compute03 is defined
+
+- name: configure compute04
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: compute04
+  when: compute04 is defined
+
+- name: configure controller
+  cl_bond:
+    name: "{{ item.name }}"
+    slaves: "{{ item.members }}"
+    clag_id: "{{ item.clag_id }}"
+  with_items: controller
+  when: controller is defined
+
+- name: configure vlan 10 svi
+  cl_interface:
+    name: "br0.10"
+    ipv4: "{{ item }}"
+  with_items: svi
+
+- name: configure clag keepalive
+  cl_interface:
+    name: "peerlink.4094"
+    ipv4: "{{ addresses[ansible_hostname].clag_ip }}"
+    clagd_enable: yes
+    clagd_priority: "1000"
+    clagd_sys_mac: "{{ addresses[ansible_hostname].clag_mac }}"
+    clagd_peer_ip: "{{ addresses[ansible_hostname].clag_peer }}"
+    clagd_args: " --vm"
+
+- name: Add source /etc/network/interfaces.d/*
+  lineinfile: dest=/etc/network/interfaces state=present line='source /etc/network/interfaces.d/*'
+  sudo: yes
+
+- name: Restart networking
+  service: name=networking state=restarted
+  sudo: yes

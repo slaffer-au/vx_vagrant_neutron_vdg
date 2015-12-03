@@ -1,0 +1,21 @@
+- name: Install ubuntu-cloud-keyring
+  apt: name=ubuntu-cloud-keyring state=present
+
+- name: Add the OpenStack Repo
+  apt_repository: repo="deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/kilo main" state=present
+
+- name: Perform an apt-get dist-upgrade
+  apt: upgrade=dist update_cache=yes
+
+- name: Install SQL, RabbitMQ and Keystone Packages
+  apt: name="{{ item }}" state=present
+  with_items:
+    - mariadb-server 
+    - python-mysqldb
+    - rabbitmq-server
+    - keystone 
+    - python-openstackclient 
+    - apache2 
+    - libapache2-mod-wsgi 
+    - memcached 
+    - python-memcache

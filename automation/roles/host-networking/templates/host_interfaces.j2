@@ -1,0 +1,38 @@
+auto lo
+iface lo inet loopback
+
+#The bond, one subinterface goes to each leaf.
+auto bond0
+  iface bond0 inet manual
+  up ip link set dev $IFACE up 
+  down ip link set dev $IFACE down 
+  bond-mode 802.3ad
+  bond-miimon 100
+  bond-lacp-rate 1
+  bond-slaves none
+  post-up ip link set promisc on dev bond0
+
+#First 10G link.
+auto eth1
+iface eth1 inet manual
+    bond-master bond0
+
+#Second 10G link.
+auto eth2
+iface eth2 inet manual
+    bond-master bond0
+
+#OpenStack API VLAN.
+auto bond0.102
+iface bond0.102 inet static
+    address {{ addresses[ansible_hostname].vl102 }}
+    netmask 255.255.240.0
+
+#External VLAN.
+auto bond0.101
+iface bond0.101 inet static
+    address {{ addresses[ansible_hostname].vl101 }}
+    netmask 255.255.255.0
+    gateway 192.168.100.1
+
+source /etc/network/interfaces.d/*.cfg

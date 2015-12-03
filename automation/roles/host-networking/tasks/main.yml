@@ -1,0 +1,14 @@
+---
+- name: push /etc/network/configuration for hosts
+  template: src=host_interfaces.j2 dest=/etc/network/interfaces
+
+# - name: restart networking
+  # command: "/etc/init.d/networking restart"
+  # sudo: yes
+
+- name: ifup -a
+  command: "/sbin/ifup -a"
+  sudo: yes
+
+# - name: reboot
+  # command: "/sbin/reboot"
